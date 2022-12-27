@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const fetch = (url) => import('node-fetch').then(({ default: fetch }) => fetch(url));
-const { readFile, writeFile } = require('fs');
+const { parse } = require('node-html-parser');
 
 const express = require('express');
 const cors = require('cors');
@@ -21,20 +21,17 @@ let content;
   await fetch(process.env.DATA_SOURCE_ENDPOINT)
     .then(res => res.text())
     .then(res => {
-      console.log(res);
-      content = res;
+      const root = parse(res);
+      console.log(root.querySelector('#technicAnalize')); // test
     });
 
   app.get('/', (req, res) => {
     res.send('<h1>Proxy serwer</h1>')
   });
-  // =================================
+
   app.get('/test', (req, res) => {
     res.status(200).json({ content: content })
   })
-  // ===================================
-
-
 })();
 
 const port = process.env.PORT || 5000;
