@@ -2,11 +2,13 @@ require('dotenv').config();
 
 const fetch = (url) => import('node-fetch').then(({ default: fetch }) => fetch(url));
 const { parse } = require('node-html-parser');
+const { readFile, writeFile } = require('fs');
 
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+const { scrap } = require('./actions/scrap');
 
 const app = express();
 
@@ -21,8 +23,16 @@ let content;
   await fetch(process.env.DATA_SOURCE_ENDPOINT)
     .then(res => res.text())
     .then(res => {
-      const root = parse(res);
-      console.log(root.querySelector('#technicAnalize')); // test
+
+      content = res;
+      scrap(res);
+
+      writeFile('./content/result.txt', content, (error, result) => {
+        if (error) {
+          console.log(error);
+          return;
+        }
+      });
     });
 
   app.get('/', (req, res) => {
