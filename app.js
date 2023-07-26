@@ -3,7 +3,7 @@ const { getQuoteTime } = require('./actions/getQuoteTime');
 require('dotenv').config();
 
 const { parse } = require('node-html-parser');
-const { readFile, writeFile } = require('fs');
+const fs = require('fs');
 // const fetch = (url) => import('node-fetch').then(({ default: fetch }) => fetch(url));
 
 const express = require('express');
@@ -29,7 +29,12 @@ fetch(process.env.DATA_SOURCE_ENDPOINT)
     getCurrentCompaniesTable(scrapedCode);
     getQuoteTime(scrapedCode);
 
-    writeFile('./downloads/downloadedPage.html', scrapedCode, (error, result) => {
+    const dirName = './downloads';
+    if (!fs.existsSync(dirName)) {
+      fs.mkdirSync(dirName);
+    }
+
+    fs.writeFile('./downloads/downloadedPage.html', scrapedCode, (error, result) => {
       if (error) {
         console.log(error);
         return;
