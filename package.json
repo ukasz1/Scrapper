@@ -9,6 +9,7 @@
     "express": "^4.17.3",
     "helmet": "^5.0.2",
     "mongoose": "^5.11.10",
+    "mysql": "^2.18.1",
     "node-fetch": "^3.3.0",
     "node-html-parser": "^6.1.4",
     "xss-clean": "^0.1.1"
