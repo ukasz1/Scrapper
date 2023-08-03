@@ -1,5 +1,6 @@
 const { getCurrentCompaniesTable } = require('./actions/getCurrentCompaniesTable');
 const { getQuoteTime } = require('./actions/getQuoteTime');
+const { getDailyIndex } = require('./actions/getDailyIndex');
 require('dotenv').config();
 
 const mysql = require("mysql");
@@ -41,27 +42,28 @@ let counter = 0;
 /* await*/
 
 
-// fetch(process.env.DATA_SOURCE_ENDPOINT)
-//   .then(res => res.text())
-//   .then(scrapedCode => {
-//     getCurrentCompaniesTable(scrapedCode);
-//     getQuoteTime(scrapedCode);
+fetch(process.env.DATA_SOURCE_ENDPOINT)
+  .then(res => res.text())
+  .then(scrapedCode => {
+    // getCurrentCompaniesTable(scrapedCode);
+    // getQuoteTime(scrapedCode);
+    getDailyIndex(scrapedCode);
 
-//     const dirName = './downloads';
-//     if (!fs.existsSync(dirName)) {
-//       fs.mkdirSync(dirName);
-//     }
+    const dirName = './downloads';
+    if (!fs.existsSync(dirName)) {
+      fs.mkdirSync(dirName);
+    }
 
-//     fs.writeFile('./downloads/downloadedPage.html', scrapedCode, (error, result) => {
-//       if (error) {
-//         console.log(error);
-//         return;
-//       }
-//     });
-//   })
-//   .then(() => {
-//     // some activity
-//   });
+    fs.writeFile('./downloads/downloadedPage.html', scrapedCode, (error, result) => {
+      if (error) {
+        console.log(error);
+        return;
+      }
+    });
+  })
+  .then(() => {
+    // some activity
+  });
 
 app.get('/', (req, res) => {
   res.send('<h1>Scrapping serwer</h1>')
@@ -73,7 +75,7 @@ app.get('/', (req, res) => {
 
 app.get('/select50', (req, res) => {
   const sql = 'SELECT * FROM \`wig20Daily\` LIMIT 50';
-  connection.query(sql, (error, results, fields) => {
+  connection.query(sql, (error, results) => {
     if (error) throw error;
     console.log('results: ', results);
   });
@@ -82,7 +84,6 @@ app.get('/select50', (req, res) => {
 const port = process.env.PORT || 5000;
 
 const start = async () => {
-
   connection.connect(err => {
     if (err)
       throw err;
@@ -90,8 +91,8 @@ const start = async () => {
   });
 
   app.listen(port, console.log(`Server is listening on port ${port}...`));
+
+  connection.end();
 }
 
 start();
-
-// connection.end();
