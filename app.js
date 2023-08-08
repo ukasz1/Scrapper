@@ -1,6 +1,8 @@
-const { getCurrentCompaniesTable } = require('./actions/getCurrentCompaniesTable');
-const { getQuoteTime } = require('./actions/getQuoteTime');
+// const { getCurrentCompaniesTable } = require('./actions/getCurrentCompaniesTable');
+// const { getQuoteTime } = require('./actions/getQuoteTime');
 const { getDailyIndex } = require('./actions/getDailyIndex');
+const uploadDailyIndex = require('./db/queries/uploadDailyIndex');
+
 require('dotenv').config();
 
 const mysql = require("mysql");
@@ -26,15 +28,12 @@ let counter = 0;
 
 //======================================
 
-
-// con.connect(function (err) {
-//   if (err) throw err;
+// connection.connect(err => {
+//   if (err)
+//     throw err;
 //   console.log("Connected!");
 // });
 
-// con.query("SELECT 1+1").on("result", function (row) {
-//   console.log(row);
-// });
 //======================================
 
 
@@ -45,9 +44,24 @@ let counter = 0;
 fetch(process.env.DATA_SOURCE_ENDPOINT)
   .then(res => res.text())
   .then(scrapedCode => {
+    
+    connection.connect(err => {
+      if (err)
+        throw err;
+      console.log("Connected!");
+    });
     // getCurrentCompaniesTable(scrapedCode);
     // getQuoteTime(scrapedCode);
-    getDailyIndex(scrapedCode);
+    // uploadDailyIndex(scrapedCode, connection);
+
+    const sql = 'SELECT * FROM \`wig20Daily\` LIMIT 50';
+    connection.query(sql, (error, results) => {
+      if (error) throw error;
+      console.log('results: ', results);
+    });
+    connection.end();
+
+
 
     const dirName = './downloads';
     if (!fs.existsSync(dirName)) {
@@ -73,26 +87,33 @@ app.get('/', (req, res) => {
 //   res.status(200).json({ content: content })
 // })
 
-app.get('/select50', (req, res) => {
-  const sql = 'SELECT * FROM \`wig20Daily\` LIMIT 50';
-  connection.query(sql, (error, results) => {
-    if (error) throw error;
-    console.log('results: ', results);
-  });
-})
+// app.get('/select50', (req, res) => {
+//   const sql = 'SELECT * FROM \`wig20Daily\` LIMIT 50';
+//   connection.query(sql, (error, results) => {
+//     if (error) throw error;
+//     console.log('results: ', results);
+//   });
+//   connection.end();
+// })
 
 const port = process.env.PORT || 5000;
 
 const start = async () => {
-  connection.connect(err => {
-    if (err)
-      throw err;
-    console.log("Connected!");
-  });
+  // connection.connect(err => {
+  //   if (err)
+  //     throw err;
+  //   console.log("Connected!");
+  // });
+
+  // const sql = 'SELECT * FROM \`wig20Daily\` LIMIT 50';
+  // connection.query(sql, (error, results) => {
+  //   if (error) throw error;
+  //   console.log('results: ', results);
+  // });
 
   app.listen(port, console.log(`Server is listening on port ${port}...`));
 
-  connection.end();
+
 }
 
 start();

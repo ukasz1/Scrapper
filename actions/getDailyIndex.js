@@ -28,7 +28,13 @@ const getDailyIndex = (htmlCode) => {
     const statPrice = Number(statPriceString.replace(',', '.'));
     dailyStats[statsDir[i]] = statPrice;
   }
-  console.log('valueNodesCollection: ', dailyStats);
+
+  const indexToUpload = {};
+  for (const key in dailyStats) {
+    indexToUpload[key + 'Int'] = dailyStats[key] * 100;
+  }
+
+  return indexToUpload;
 }
 
 module.exports = { getDailyIndex };
