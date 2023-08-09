@@ -7,11 +7,11 @@ const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 
 const connection = mysql.createConnection({
-    host: hostname,
-    user: username,
-    password,
-    database,
-    port: dbport,
-  });
+  host: hostname,
+  user: username,
+  password,
+  database,
+  port: dbport,
+});
 
 module.exports = connection;
