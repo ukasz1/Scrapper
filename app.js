@@ -23,9 +23,6 @@ app.use(xss());
 fetch(process.env.DATA_SOURCE_ENDPOINT)
   .then(res => res.text())
   .then(scrapedCode => {
-    // getCurrentCompaniesTable(scrapedCode);
-    // getQuoteTime(scrapedCode);
-
     connection.connect(err => {
       if (err)
         throw err;
