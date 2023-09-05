@@ -20,21 +20,27 @@ app.use(cors());
 app.use(helmet());
 app.use(xss());
 
-fetch(process.env.DATA_SOURCE_ENDPOINT)
-  .then(res => res.text())
-  .then(scrapedCode => {
-    connection.connect(err => {
-      if (err)
-        throw err;
-      console.log("Connected!");
-    });
-    uploadDailyIndex(scrapedCode, connection);
+connection.connect(err => {
+  if (err)
+    throw err;
+  console.log("Connected!");
+});
 
-    connection.end();
-  })
-  .then(() => {
-    // some activity
-  });
+const abc = async () => {
+  fetch(process.env.DATA_SOURCE_ENDPOINT)
+    .then(res => res.text())
+    .then(scrapedCode => {
+      uploadDailyIndex(scrapedCode, connection);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
+  
+// connection.end();
+
+if (process.env.ENABLE_GETTING_DAILY_INDEX)
+  setInterval(abc, 60000);
 
 app.get('/', (req, res) => {
   res.send('<h1>Scrapping serwer</h1>')
