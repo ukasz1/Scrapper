@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const connection = require('./db/connect')
 const { parse } = require('node-html-parser');
+const fetch = require("node-fetch");
 const fs = require('fs');
 
 const express = require('express');
@@ -40,7 +41,7 @@ const abc = async () => {
 // connection.end();
 
 if (process.env.ENABLE_GETTING_DAILY_INDEX)
-  setInterval(abc, 60000);
+  setInterval(abc, 5000);
 
 app.get('/', (req, res) => {
   res.send('<h1>Scrapping serwer</h1>')
