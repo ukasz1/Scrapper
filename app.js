@@ -1,13 +1,13 @@
 // const { getCurrentCompaniesTable } = require('./actions/getCurrentCompaniesTable');
 // const { getQuoteTime } = require('./actions/getQuoteTime');
 const uploadDailyIndex = require('./db/queries/uploadDailyIndex');
+const {SERVER_URL, SERVER_REFRESH_TIME_IN_MIN, DATA_SOURCE_ENDPOINT, ENABLE_GETTING_DAILY_INDEX} = require('./config.js');
 
 require('dotenv').config();
 
 const connection = require('./db/connect')
-const { parse } = require('node-html-parser');
 const fetch = require("node-fetch");
-const fs = require('fs');
+const cron = require('node-cron');
 
 const express = require('express');
 const cors = require('cors');
@@ -21,27 +21,44 @@ app.use(cors());
 app.use(helmet());
 app.use(xss());
 
-connection.connect(err => {
-  if (err)
-    throw err;
-  console.log("Connected!");
-});
-
-const abc = async () => {
-  fetch(process.env.DATA_SOURCE_ENDPOINT)
-    .then(res => res.text())
-    .then(scrapedCode => {
-      uploadDailyIndex(scrapedCode, connection);
-    })
-    .catch(error => {
-      console.log(error);
-    });
+if (ENABLE_GETTING_DAILY_INDEX) {
+  connection.connect(err => {
+    if (err)
+      throw err;
+    console.log("Connected!");
+  });
 }
-  
-// connection.end();
 
-if (process.env.ENABLE_GETTING_DAILY_INDEX)
-  setInterval(abc, 60000);
+
+const scrapDailyIndex = async () => {
+  fetch(DATA_SOURCE_ENDPOINT)
+  .then(res => res.text())
+  .then(scrapedCode => {
+    uploadDailyIndex(scrapedCode, connection);
+  })
+  .catch(error => {
+    console.log(error);
+  });
+}
+
+cron.schedule('10 17 * * 1-5', async () => {
+  if (ENABLE_GETTING_DAILY_INDEX) {
+    await scrapDailyIndex();
+  }
+})
+
+const refreshServerSession = async () => {
+  fetch(SERVER_URL)
+    .then((res) => {
+      console.log('Session refreshed - time: ', new Date());
+      console.log(res);
+    })
+}
+
+// Refresh server
+setInterval(refreshServerSession, SERVER_REFRESH_TIME_IN_MIN*60000);
+
+// connection.end();
 
 app.get('/', (req, res) => {
   res.send('<h1>Scrapping serwer</h1>')

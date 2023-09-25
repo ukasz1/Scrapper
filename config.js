@@ -1,0 +1,13 @@
+require('dotenv').config();
+
+const SERVER_URL = process.env.SERVER_URL;
+const SERVER_REFRESH_TIME_IN_MIN = Number(process.env.SERVER_REFRESH_TIME_IN_MIN);
+const DATA_SOURCE_ENDPOINT = process.env.DATA_SOURCE_ENDPOINT;
+const ENABLE_GETTING_DAILY_INDEX = process.env.ENABLE_GETTING_DAILY_INDEX.toLowerCase() === 'true';
+
+module.exports = {
+  SERVER_URL,
+  SERVER_REFRESH_TIME_IN_MIN,
+  DATA_SOURCE_ENDPOINT,
+  ENABLE_GETTING_DAILY_INDEX,
+}
