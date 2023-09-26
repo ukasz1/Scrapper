@@ -35,6 +35,7 @@ const scrapDailyIndex = async () => {
   .then(res => res.text())
   .then(scrapedCode => {
     uploadDailyIndex(scrapedCode, connection);
+    console.log('Daily index scrapped at: ', new Date());
   })
   .catch(error => {
     console.log(error);
@@ -51,7 +52,6 @@ const refreshServerSession = async () => {
   fetch(SERVER_URL)
     .then((res) => {
       console.log('Session refreshed - time: ', new Date());
-      console.log(res);
     })
 }
 
