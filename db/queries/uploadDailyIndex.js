@@ -15,7 +15,7 @@ const uploadDailyIndex = (code, connection) => {
 
   connection.query(createDailyPointsTableQuery, (error, results) => {
     if (error) throw error;
-    console.log('results: ', results);
+    // console.log('results: ', results);
   });
 
   const insertPointsQuery =
@@ -29,7 +29,7 @@ const uploadDailyIndex = (code, connection) => {
       
   connection.query(insertPointsQuery, (error, results) => {
     if (error) throw error;
-    console.log('results: ', results);
+    // console.log('results: ', results);
   });
 }
 
