@@ -29,8 +29,7 @@ if (ENABLE_GETTING_DAILY_INDEX) {
   });
 }
 
-
-const scrapDailyIndex = async () => {
+const scrapDailyIndex = () => {
   fetch(DATA_SOURCE_ENDPOINT)
   .then(res => res.text())
   .then(scrapedCode => {
@@ -42,9 +41,10 @@ const scrapDailyIndex = async () => {
   });
 }
 
-cron.schedule('30 17 * * 1-5', async () => {
+// cron.schedule('27 17 * * 1-5', async () => {
+cron.schedule('* * * * 1-5', async () => {
   if (ENABLE_GETTING_DAILY_INDEX) {
-    await scrapDailyIndex();
+    scrapDailyIndex();
   }
 })
 
