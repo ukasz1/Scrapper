@@ -41,8 +41,7 @@ const scrapDailyIndex = () => {
   });
 }
 
-// cron.schedule('27 17 * * 1-5', async () => {
-cron.schedule('* * * * 1-5', async () => {
+cron.schedule('10 17 * * 1-5', async () => {
   if (ENABLE_GETTING_DAILY_INDEX) {
     scrapDailyIndex();
   }
