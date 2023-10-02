@@ -1,10 +1,4 @@
-// const { getCurrentCompaniesTable } = require('./actions/getCurrentCompaniesTable');
-// const { getQuoteTime } = require('./actions/getQuoteTime');
-const uploadDailyIndex = require('./db/queries/uploadDailyIndex');
-const {SERVER_URL, SERVER_REFRESH_TIME_IN_MIN, DATA_SOURCE_ENDPOINT, ENABLE_GETTING_DAILY_INDEX} = require('./config.js');
-
 require('dotenv').config();
-
 const connection = require('./db/connect')
 const fetch = require("node-fetch");
 const cron = require('node-cron');
@@ -13,6 +7,14 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+
+const uploadDailyIndex = require('./db/queries/uploadDailyIndex');
+const {
+  SERVER_URL, 
+  SERVER_REFRESH_TIME_IN_MIN, 
+  DATA_SOURCE_ENDPOINT, 
+  ENABLE_GETTING_DAILY_INDEX
+} = require('./config.js');
 
 const app = express();
 
@@ -41,24 +43,23 @@ const scrapDailyIndex = () => {
   });
 }
 
+// Cron schedules
 cron.schedule('10 17 * * 1-5', async () => {
   if (ENABLE_GETTING_DAILY_INDEX) {
     scrapDailyIndex();
   }
 })
 
+// Refresh the server to not go into sleep mode (free tier)
 const refreshServerSession = async () => {
   fetch(SERVER_URL)
-    .then((res) => {
+    .then(() => {
       console.log('Session refreshed - time: ', new Date());
     })
 }
-
-// Refresh server
 setInterval(refreshServerSession, SERVER_REFRESH_TIME_IN_MIN*60000);
 
-// connection.end();
-
+// Endpoints
 app.get('/', (req, res) => {
   res.send('<h1>Scrapping serwer</h1>')
 });
